@@ -11,6 +11,7 @@ def show_heatmap(matrix, title='', block=True, fig_num=1, text=True):
     plt.imshow(matrix, interpolation='nearest')
     plt.title(title)
     plt.colorbar()
+    plt.show()
     if text:
         for y in range(matrix.shape[0]):
             for x in range(matrix.shape[1]):

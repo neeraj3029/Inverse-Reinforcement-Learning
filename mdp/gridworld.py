@@ -31,12 +31,12 @@ class GridWorld(object):
 
     self.terminals = terminals
     self.grid = grid
-    self.neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)]
-    self.actions = [0, 1, 2, 3, 4]
+    self.neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    self.actions = [0, 1, 2, 3]
     self.n_actions = len(self.actions)
     # self.dirs = {0: 's', 1: 'r', 2: 'l', 3: 'd', 4: 'u'}
-    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
-    #              right,    left,   down,   up ,   stay
+    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u'}
+    #              right,    left,   down,   up 
     # self.action_nei = {0: (0,1), 1:(0,-1), 2:(1,0), 3:(-1,0)}
 
     # If the mdp is deterministic, the transition probability of taken a certain action should be 1
@@ -46,7 +46,7 @@ class GridWorld(object):
 
   def show_grid(self):
     for i in range(len(self.grid)):
-      print self.grid[i]
+      print(self.grid[i]) 
 
   def get_grid(self):
     return self.grid
@@ -133,9 +133,8 @@ class GridWorld(object):
 
     if self.trans_prob == 1:
       inc = self.neighbors[action]
-      nei_s = (state[0] + inc[0], state[1] + inc[1])
-      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[
-              1] >= 0 and nei_s[1] < self.width and self.grid[nei_s[0]][nei_s[1]] != 'x':
+      nei_s = [state[0] + inc[0], state[1] + inc[1]]
+      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[1] >= 0 and nei_s[1] < self.width and self.grid[int(nei_s[0])][int(nei_s[1])] != 'x':
         return [(nei_s, 1)]
       else:
         # if the state is invalid, stay in the current state
@@ -149,8 +148,7 @@ class GridWorld(object):
       for a in range(self.n_actions):
         inc = self.neighbors[a]
         nei_s = (state[0] + inc[0], state[1] + inc[1])
-        if nei_s[0] < 0 or nei_s[0] >= self.height or \
-           nei_s[1] < 0 or nei_s[1] >= self.width or self.grid[nei_s[0]][nei_s[1]] == 'x':
+        if nei_s[0] < 0 or nei_s[0] >= self.height or nei_s[1] < 0 or nei_s[1] >= self.width or self.grid[int(nei_s[0])][int(nei_s[1])] == 'x':
           # if the move is invalid, accumulates the prob to the current state
           mov_probs[self.n_actions-1] += mov_probs[a]
           mov_probs[a] = 0
@@ -245,7 +243,7 @@ class GridWorld(object):
   ###################################
 
   def display_qvalue_grid(self, qvalues):
-    print "==Display q-value grid=="
+    print("==Display q-value grid==")
 
     qvalues_grid = np.empty((len(self.grid), len(self.grid[0])), dtype=object)
     for s in self.get_states():
@@ -256,18 +254,17 @@ class GridWorld(object):
         for a in self.get_actions(s):
           tmp_str = tmp_str + self.dirs[a]
           tmp_str = tmp_str + str(' {:.2f} '.format(qvalues[(s, a)]))
-          # print tmp_str
         qvalues_grid[s[0]][s[1]] = tmp_str
 
     row_format = '{:>40}' * (len(self.grid[0]))
     for row in qvalues_grid:
-      print row_format.format(*row)
+      print(row_format.format(*row))
 
   def display_value_grid(self, values):
     """
     Prints a nice table of the values in grid
     """
-    print "==Display value grid=="
+    print('==Display value grid==')
 
     value_grid = np.zeros((len(self.grid), len(self.grid[0])))
     for k in values:
@@ -275,7 +272,7 @@ class GridWorld(object):
 
     row_format = '{:>20.4}' * (len(self.grid[0]))
     for row in value_grid:
-      print row_format.format(*row)
+      print(row_format.format(*row))
 
   def display_policy_grid(self, policy):
     """
@@ -283,7 +280,7 @@ class GridWorld(object):
     input:
       policy    a dictionary of the optimal policy {<state, action_dist>}
     """
-    print "==Display policy grid=="
+    print("==Display policy grid==")
 
     policy_grid = np.chararray((len(self.grid), len(self.grid[0])))
     for k in self.get_states():
@@ -295,7 +292,7 @@ class GridWorld(object):
 
     row_format = '{:>20}' * (len(self.grid[0]))
     for row in policy_grid:
-      print row_format.format(*row)
+      print(row_format.format(*row))
 
   #######################
   # Some util functions #
@@ -364,4 +361,4 @@ class GridWorld(object):
     returns:
       2d column-major position
     """
-    return (idx % self.height, idx / self.height)
+    return (idx % self.height, idx // self.height)

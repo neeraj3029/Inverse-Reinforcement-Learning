@@ -1,11 +1,3 @@
-# Gridworld provides a basic environment for RL agents to interact with
-#
-# ---
-# @author Yiren Lu
-# @email luyiren [at] seas [dot] upenn [dot] edu
-#
-# MIT License
-
 import numpy as np
 
 

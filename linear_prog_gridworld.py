@@ -1,7 +1,8 @@
 import numpy as np 
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 
-from mdp import gridworld, value_iteration
+from mdp import gridworld
 from linear_prog_irl import *
 
 def show_heatmap(matrix, title='', block=True, fig_num=1, text=True):
@@ -23,8 +24,8 @@ def show_heatmap(matrix, title='', block=True, fig_num=1, text=True):
         input()
 
 if __name__ == "__main__":
-    height = 10
-    width = 10
+    height = 5
+    width = 5
     N_s = height*width
     N_a = 4 # left right up and down
     R_max = 10
@@ -37,15 +38,11 @@ if __name__ == "__main__":
 
     gw_mdp = gridworld.GridWorld(grid, {(height-1, width-1)}, trans_prob)
 
-    val_it = value_iteration.ValueIterationAgent(gw_mdp, gamma, iterations)
 
     R_mat = gw_mdp.get_reward_mat()
     # show rewards map
     show_heatmap(R_mat, 'Ground Truth of Reward')
 
-    V_mat = gw_mdp.get_values_mat(val_it.get_values())
-    # show values map
-    show_heatmap(V_mat, 'Ground Truth of Value')
     P = np.zeros((N_s, N_s, N_a)) # transition matrix
 
     for s_i in range(N_s):
@@ -56,18 +53,14 @@ if __name__ == "__main__":
                 s_j = gw_mdp.pos2idx(state_j)
                 P[s_i, s_j, a] = prob
 
-    # gw_mdp.display_policy_grid(val_it.get_optimal_policy())
-    # gw_mdp.display_value_grid(val_it.get_values())
-
     opt_policy = np.zeros(N_s)
-    for i in range(N_s):
-        opt_policy[i] = val_it.get_action(gw_mdp.idx2pos(i))
 
-    # find the rewards for desired policy
+    opt_policy = [2, 2, 2, 2, 0, 0, 2, 2, 0, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2, 0, 2, 2, 2, 2, 0]
+
     rewards = linear_prog_irl(P, opt_policy, gamma=gamma, l1=lmbda, R_max=R_max)
-    # rewards = np.zeros(N_s)
+
     # show new rewards
+    rew = np.reshape(rewards, (height, width), order='F')
+    print(rew)
     show_heatmap(np.reshape(rewards, (height, width), order='F'), 'Reward Map - Recovered')
-
-
-
+    

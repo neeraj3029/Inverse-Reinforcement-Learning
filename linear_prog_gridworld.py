@@ -23,13 +23,13 @@ def show_heatmap(matrix, title='', block=True, fig_num=1, text=True):
         input()
 
 if __name__ == "__main__":
-    height = 5
-    width = 5
+    height = 10
+    width = 10
     N_s = height*width
     N_a = 4 # left right up and down
     R_max = 10
     trans_prob = 0.7 # with 30% prob takes random action other than chosen
-    gamma = 0.9
+    gamma = 0.5
     lmbda = 10
     iterations = 100
     grid = np.zeros((height,width))
@@ -54,7 +54,6 @@ if __name__ == "__main__":
             probabilities = gw_mdp.get_transition_states_and_probs(state_i, a)
             for state_j, prob in probabilities:
                 s_j = gw_mdp.pos2idx(state_j)
-                # Prob of si to sj given action a
                 P[s_i, s_j, a] = prob
 
     # gw_mdp.display_policy_grid(val_it.get_optimal_policy())
@@ -65,7 +64,7 @@ if __name__ == "__main__":
         opt_policy[i] = val_it.get_action(gw_mdp.idx2pos(i))
 
     # find the rewards for desired policy
-    rewards = lp_irl(P, opt_policy, gamma=gamma, l1=lmbda, R_max=R_max)
+    rewards = linear_prog_irl(P, opt_policy, gamma=gamma, l1=lmbda, R_max=R_max)
     # rewards = np.zeros(N_s)
     # show new rewards
     show_heatmap(np.reshape(rewards, (height, width), order='F'), 'Reward Map - Recovered')
